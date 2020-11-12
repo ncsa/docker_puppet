@@ -1,6 +1,7 @@
 #!/bin/bash
 
 QS_URL=https://raw.githubusercontent.com/andylytical/quickstart/master/quickstart.sh
+export QS_REPO=https://github.com/ncsa/docker_puppet
 
 set -x
 
@@ -18,7 +19,6 @@ cd "$PDIR" \
 && rm -rf "$PDIR" \
 && git clone https://github.com/puppetlabs/pupperware \
 && cd pupperware \
-&& export QS_REPO=https://github.com/andylytical/docker_puppet \
 && curl $QS_URL | bash \
 && cd "$PDIR" \
 && docker-compose up -d

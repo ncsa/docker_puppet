@@ -34,3 +34,14 @@
 ```shell
 ~/pupperware/bin/enc_adm FQDN
 ```
+
+## Customize enc repo and/or branch
+- `export ENC_GIT_REPO=https://github.com/ncsa/puppetserver-enc`
+- `export ENC_GIT_BRANCH=my/custom/branch`
+- `~/pupperware/server/enc/setup.sh`
+
+## Customize tables.yaml
+- `docker cp -L pupperware_puppet_1:/etc/puppetlabs/enc/tables.yaml ~/pupperware/server/enc/tables.yaml`
+- `vim ~/pupperware/server/enc/tables.yaml`
+- `docker cp -L ~/pupperware/server/enc/tables.yaml pupperware_puppet_1:/etc/puppetlabs/enc/`
+- `~/pupperware/bin/enc_adm --init`

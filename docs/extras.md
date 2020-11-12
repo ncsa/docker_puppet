@@ -5,5 +5,5 @@
 
 ## Reset
 - `cd; curl
-  https://raw.githubusercontent.com/andylytical/docker_puppet/${QS_GIT_BRANCH:-master}/server/tools/reset.sh
+  https://raw.githubusercontent.com/ncsa/docker_puppet/${QS_GIT_BRANCH:-master}/server/tools/reset.sh
   | bash`
