@@ -16,17 +16,12 @@ Install each of the dependencies below:
 Note: All commands below are expected to be run from inside the pupperware
 directory.
 
----
-
 ### Install customizations from this repo
 - `export QS_REPO=https://github.com/ncsa/docker_puppet`
-- `#export QS_GIT_BRANCH=branch_name`  (__optional__ - specify a branch other than master)
 - `curl https://raw.githubusercontent.com/andylytical/quickstart/master/quickstart.sh | bash`
 
 ### Review .env settings
 - `vim .env`
-
----
 
 ### Start puppetserver
 - `docker-compose up -d`
