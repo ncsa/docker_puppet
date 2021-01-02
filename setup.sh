@@ -5,9 +5,14 @@ set -x
 BASE=$( dirname $0 )
 TS=$(date +%s)
 
-# ASSUME RUNNING FROM TOP LEVEL OF CLONED PUPPERWARE REPO
-# Output from 'pwd' will be the directory from which quickstart was invoked
-INSTALL_DIR="$(pwd)"
+# Try to find pupperware install dir
+[[ -z "$PUPPERWARE" ]] && INSTALL_DIR="$PUPPERWARE"
+[[ -z "$INSTALL_DIR" ]] && INSTALL_DIR=~/pupperware
+[[ -d "$INSTALL_DIR" ]] || {
+  echo "FATAL: Can't find pupperware directory" >&2
+  echo "Try setting PUPPERWARE environment variable" >&2
+  exit 1
+}
 
 
 # Install from src to tgt
