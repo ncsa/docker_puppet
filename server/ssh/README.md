@@ -54,9 +54,9 @@ docker-compose exec puppet /install_ssh.sh
 ```shell
 # start a shell in the container
 docker-compose exec puppet bash
-# make initial connection to get-sec
+# make initial connection
 # ...will require manual login to bastion, proxy, etc.
-ssh -T git-sec
+ssh -T PRIVATE-GIT-SERVER-HOSTNAME
 # exit the container
 exit
 ```
@@ -65,7 +65,7 @@ exit
 
 ### Verify non-interactive access (re-uses the authenticated channel created above)
 ```shell
-docker-compose exec puppet ssh -T git-sec
+docker-compose exec puppet ssh -T PRIVATE-GIT-SERVER-HOSTNAME
 ```
 Note: If password prompts continue, might have to login directly to each host
 in the path.  Check for files (inside the container), should have one per host:

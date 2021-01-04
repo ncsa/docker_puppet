@@ -1,12 +1,12 @@
-Host cerberus
-    Hostname cerberus4.ncsa.illinois.edu
+Host proxy1
+    Hostname proxy1.fqdn
     User aloftus
-Host bastion
-    Hostname lsst-bastion01.ncsa.illinois.edu
+Host proxy2
+    Hostname proxy2.fqdn
     User aloftus
     ProxyJump cerberus
-Host git-sec
-    Hostname lsst-git.ncsa.illinois.edu
+Host PRIVATE-GIT-SERVER-HOSTNAME
+    Hostname PRIVATE-GIT-SERVER-HOSTNAME
     User git
     PreferredAuthentications publickey
     IdentityFile /etc/puppetlabs/r10k/ssh/private-hiera-deploy-key
