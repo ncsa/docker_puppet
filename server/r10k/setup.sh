@@ -29,33 +29,41 @@ dokr_compose() {
 
 # r10k runner script (outside the container)
 tgt="$PDIR"/bin/r10k
-/bin/cp -f "$PDIR"/bin/puppetserver $tgt
-sed -i -e '/puppetserver/ d' $tgt
->>$tgt echo 'echo "R10K Start $(date)"'
->>$tgt echo "docker-compose exec puppet /r10k \"\$@\""
->>$tgt echo 'echo'
->>$tgt echo 'echo "R10K End $(date)"'
->>$tgt echo 'echo "ELAPSED: $SECONDS (seconds)"'
+[[ -f "$tgt" ]] || {
+  /bin/cp -f "$PDIR"/bin/puppetserver $tgt
+  sed -i -e '/puppetserver/ d' $tgt
+  >>$tgt echo 'echo "R10K Start $(date)"'
+  >>$tgt echo "docker-compose exec puppet /r10k \"\$@\""
+  >>$tgt echo 'echo'
+  >>$tgt echo 'echo "R10K End $(date)"'
+  >>$tgt echo 'echo "ELAPSED: $SECONDS (seconds)"'
+}
 
 
 # Custom log viewer script (outside the container)
 tgt="$PDIR"/bin/r10k_log
-/bin/cp -f "$PDIR"/bin/puppetserver $tgt
-sed -i -e '/puppetserver/ d' $tgt
->>$tgt cat <<ENDHERE
+[[ -f "$tgt" ]] || {
+  /bin/cp -f "$PDIR"/bin/puppetserver $tgt
+  sed -i -e '/puppetserver/ d' $tgt
+  >>$tgt cat <<ENDHERE
 tmpfn=\$(mktemp)
 >\$tmpfn docker-compose exec puppet bash -c 'cat /var/log/r10k/\$(ls /var/log/r10k | tail -1)'
 less \$tmpfn
 rm \$tmpfn
 ENDHERE
+}
 
+
+# custom script to verify r10k repo access (outside the container)
+tgt="$PDIR"/bin/verify_repo_access
+[[ -f "$tgt" ]] || {
+  /bin/cp -f "$PDIR"/bin/puppetserver "$tgt"
+  sed -i -e 's/puppetserver/\/verify_repo_access.sh/' "$tgt"
+}
 
 # custom script to verify r10k repo access (inside the container)
 docker cp -L "$PDIR"/server/r10k/verify_repo_access.sh pupperware_puppet_1:/verify_repo_access.sh
 dokr_compose exec puppet chmod +x /verify_repo_access.sh
-# custom script to verify r10k repo access (outside the container)
-/bin/cp -f "$PDIR"/bin/puppetserver "$PDIR"/bin/verify_repo_access
-sed -i -e 's/puppetserver/\/verify_repo_access.sh/' "$PDIR"/bin/verify_repo_access
 
 
 # symlink custom r10k runner (inside the container)
