@@ -8,7 +8,7 @@ Install each of the dependencies below:
 # Install for Testing
 
 ### Install into $HOME/pupperware
-- `curl -O https://github.com/ncsa/docker_puppet/blob/master/server/tools/reset.sh`
+- `curl -O https://raw.githubusercontent.com/ncsa/docker_puppet/master/server/tools/reset.sh`
 - `bash reset.sh`
 - [Setup ENC](server/enc/README.md)
 - [Setup R10K](server/r10k/README.md)
