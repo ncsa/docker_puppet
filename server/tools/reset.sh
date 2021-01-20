@@ -13,12 +13,10 @@ QUICKSTART=https://raw.githubusercontent.com/andylytical/quickstart/master/quick
 
 PDIR="${PUPPERWARE:-$HOME/pupperware}"
 echo "Pupperware install dir: '$PDIR'"
-COMPOSE_FILE="$PDIR/docker-compose.yml"
 
 
-# stop if QS_REPO is not set
-[[ -z "QS_REPO" ]] && QS_REPO=https://github.com/ncsa/docker_puppet
-export QS_REPO
+# use default repo if QS_REPO is not set
+[[ -z "$QS_REPO" ]] && export QS_REPO=https://github.com/ncsa/docker_puppet
 echo "QS_REPO=$QS_REPO"
 
 
