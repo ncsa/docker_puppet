@@ -31,6 +31,7 @@ dokr_compose() {
 tgt="$PDIR"/bin/r10k
 [[ -f "$tgt" ]] || {
   /bin/cp -f "$PDIR"/bin/puppetserver $tgt
+  sed -i -e '1c\#!/bin/bash' $tgt
   sed -i -e '/puppetserver/ d' $tgt
   >>$tgt echo 'echo "R10K Start $(date)"'
   >>$tgt echo "docker-compose exec puppet /r10k \"\$@\""
