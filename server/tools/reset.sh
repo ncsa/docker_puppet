@@ -43,6 +43,16 @@ rm_existing_pupperware() {
 }
 
 
+assert_git() {
+  type git || {
+    echo "ERROR 'git' not found"
+    exit 1
+  }
+}
+
+
+assert_git
+
 pushd ~ \
 && rm_existing_pupperware \
 && git clone https://github.com/puppetlabs/pupperware "$PDIR" \
