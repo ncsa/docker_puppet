@@ -51,7 +51,16 @@ assert_git() {
 }
 
 
+assert_docker() {
+  systemctl show --property ActiveState docker | grep -q 'ActiveState=active' || {
+    echo "ERROR: Docker is not running."
+    exit 1
+  }
+}
+
+
 assert_git
+assert_docker
 
 pushd ~ \
 && rm_existing_pupperware \
