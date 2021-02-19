@@ -11,7 +11,7 @@ Puppet R10k
 - `~/pupperware/bin/verify_repo_access`
 - Resolve any errors before proceeding
   - See also:
-    [Non-interactive access to a private git server (behind a firewall)](server/ssh/README.md)
+    [Non-interactive access to a private git server (behind a firewall)](/server/ssh/README.md)
 
 
 ## Common Actions
