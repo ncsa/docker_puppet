@@ -2,6 +2,11 @@
  
 PYTHON_PKGS=( python3 python3-venv )
 OTHER_PKGS=( git )
+
+# Setup Proxy
+if [[ -n "___HTTP_PROXY___" ]] ; then
+  export https_proxy="___HTTP_PROXY___"
+fi
  
 # Install dependencies
 apt update \

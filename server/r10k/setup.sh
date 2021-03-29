@@ -77,7 +77,12 @@ sed -i \
   -e "s|___R10K_GIT_BRANCH___|$BRANCH|" \
   -e "s|___PUP_R10K_DIR___|$INSTALL_DIR|" \
   "$PDIR"/server/r10k/install.sh
-
+# set proxy if needed
+[[ -n "$https_proxy" ]] && {
+  sed -i \
+    -e "s|___HTTP_PROXY___|$https_proxy|" \
+    "$PDIR"/server/r10k/install.sh
+}
 
 # install r10k inside the container
 src="$PDIR"/server/r10k/install.sh

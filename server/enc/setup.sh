@@ -45,11 +45,17 @@ hup="$PDIR"/bin/hup
 }
 
 
-# modify install.sh with git REPO and BRANCH
+# update install.sh
 sed -i \
   -e "s|___ENC_GIT_REPO___|$REPO|" \
   -e "s|___ENC_GIT_BRANCH___|$BRANCH|" \
   "$PDIR"/server/enc/install.sh
+# set proxy if needed
+[[ -n "$https_proxy" ]] && {
+  sed -i \
+    -e "s|___HTTP_PROXY___|$https_proxy|" \
+    "$PDIR"/server/enc/install.sh
+}
 
 
 # install enc (inside the container)

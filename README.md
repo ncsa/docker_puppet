@@ -20,6 +20,7 @@ Install each of the dependencies below:
 - Set environment variables
   - `export DNS_ALT_NAMES=short_hostname,fully_qualified_hostname,IP_Address,IP_Address`
   - `export DOMAIN=ncsa.illinois.edu`
+  - `export https_proxy=proxy.host.name:1234` #OPTIONAL
 
 ### Installation
 - `curl -O https://raw.githubusercontent.com/ncsa/docker_puppet/master/server/tools/reset.sh`
