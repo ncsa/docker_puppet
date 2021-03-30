@@ -13,66 +13,19 @@ Note:
     - [GitHub](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh)
     - [GitLab](https://docs.gitlab.com/ce/ssh/README.html)
 
+---
+
+### Identify SSH key
 Setup session environment variables for the appropriate ssh deploy key.
 Adjust the path here to point to the private ssh key to use.
-```shell
-export DEPLOYKEY=~/.ssh/r10k.deploy.key
-```
+- `export DEPLOYKEY=~/.ssh/r10k.deploy.key`
 Commands below will use this session environment variable.
 
----
+### Update SSH client config file
+- `vim ~/pupperware/server/ssh/config`
 
-### Install private portion of deploy key in the container
-```shell
-cd ~/pupperware
-docker-compose exec puppet mkdir /etc/puppetlabs/r10k/ssh/
-docker cp -L "$DEPLOYKEY" pupperware_puppet_1:/etc/puppetlabs/r10k/ssh/private-hiera-deploy-key
-docker-compose exec puppet chown root:root /etc/puppetlabs/r10k/ssh/private-hiera-deploy-key
-```
-
-### Install ssh in the container
-```shell
-docker cp -L server/ssh/install.sh pupperware_puppet_1:/install_ssh.sh
-docker-compose exec puppet /install_ssh.sh
-```
-
-### Configure ssh
-- Adjust settings in `server/ssh/config` as appropriate for your setup
-  ```shell
-  vim server/ssh/config
-  ```
-- Copy ssh config into container
-  ```shell
-  docker cp -L server/ssh/config pupperware_puppet_1:/etc/puppetlabs/r10k/ssh/config
-  docker-compose exec puppet chown root:root /etc/puppetlabs/r10k/ssh/config
-  docker-compose exec puppet rm -rf /root/.ssh
-  docker-compose exec puppet ln -s /etc/puppetlabs/r10k/ssh /root/.ssh
-  ```
-
----
-
-### Initialize ssh connection from container to the secure git server
-```shell
-# start a shell in the container
-docker-compose exec puppet bash
-# make initial connection
-# ...will require manual login to bastion, proxy, etc.
-ssh -T PRIVATE-GIT-SERVER-HOSTNAME
-# exit the container
-exit
-```
-
----
-
-### Verify non-interactive access (re-uses the authenticated channel created above)
-```shell
-docker-compose exec puppet ssh -T PRIVATE-GIT-SERVER-HOSTNAME
-```
-Note: If password prompts continue, might have to login directly to each host
-in the path.  Check for files (inside the container), should have one per host:
-`/root/puppet.test.local-<USER>@<HOST>:22=`
+### Install and configure ssh in the container
+- `~/pupperware/server/ssh/setup.sh`
 
 ### Verify R10K has access to all repos defined in r10k.yaml
-```shell
-bin/verify_repo_access
-```
+- `~/pupperware/bin/verify_repo_access`
