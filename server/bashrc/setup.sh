@@ -32,7 +32,8 @@ dokr_compose() {
 
 # Copy files locally
 BASE="$HOME"/pup_bashrc
-mkdir "$BASE"
+[[ -d "$BASE" ]] && rm -rf "$BASE"
+mkdir -p "$BASE"
 cp -a -t "$BASE" "$PDIR"/server/bashrc/.
 
 # Run installer locally

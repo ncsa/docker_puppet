@@ -24,6 +24,7 @@ Commands below will use this session environment variable.
 
 ### Install private portion of deploy key in the container
 ```shell
+cd ~/pupperware
 docker-compose exec puppet mkdir /etc/puppetlabs/r10k/ssh/
 docker cp -L "$DEPLOYKEY" pupperware_puppet_1:/etc/puppetlabs/r10k/ssh/private-hiera-deploy-key
 docker-compose exec puppet chown root:root /etc/puppetlabs/r10k/ssh/private-hiera-deploy-key

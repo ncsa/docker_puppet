@@ -110,9 +110,9 @@ Environment="HTTPS_PROXY=http://${HTTP_PROXY}"
 Environment="NO_PROXY=puppet,puppetdb,localhost,127.0.0.1,*.ncsa.illinois.edu"
 ENDHERE
       systemctl daemon-reload
-      systemctl show --property Environment docker #check to make sure your proxy shows up here
       systemctl restart docker
       systemctl enable docker
+      docker info | awk -v IGNORECASE=1 '/PROXY/ {print $NF}'
     fi
   fi
 }
@@ -193,7 +193,7 @@ all_services_up || {
 # Continue setup steps
 export COMPOSE_INTERACTIVE_NO_CLI=1
 "$PDIR"/server/bashrc/setup.sh \
-&& "$PDIR"/server/extras/setup.sh \
 && "$PDIR"/server/enc/setup.sh \
-&& "$PDIR"/server/r10k/setup.sh
+&& "$PDIR"/server/r10k/setup.sh \
+&& "$PDIR"/server/extras/setup.sh
 unset COMPOSE_INTERACTIVE_NO_CLI
