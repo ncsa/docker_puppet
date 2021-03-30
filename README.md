@@ -31,13 +31,9 @@ Install each of the dependencies below:
 - [Setup ENC](server/enc/README.md)
 - [Setup R10K](server/r10k/README.md)
 
-
 ---
-
 
 # Other Actions
 
 - [Puppet agent in Vagrant VM](vagrant/README.md)
 - [Non-interactive access to a private git server (behind a firewall)](server/ssh/README.md)
-- Add pupperware/bin to PATH:
-  - `~/pupperware/server/bashrc/setup.sh`
