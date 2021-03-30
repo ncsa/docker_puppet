@@ -192,9 +192,8 @@ all_services_up || {
 
 # Continue setup steps
 export COMPOSE_INTERACTIVE_NO_CLI=1
-"$PDIR"/server/bashrc/setup.sh
-#"$PDIR"/server/enc/setup.sh \
-#echo DONE?
-#&& "$PDIR"/server/r10k/setup.sh \
-#&& "$PDIR"/server/extras/setup.sh
+"$PDIR"/server/bashrc/setup.sh \
+&& "$PDIR"/server/extras/setup.sh \
+&& "$PDIR"/server/enc/setup.sh \
+&& "$PDIR"/server/r10k/setup.sh
 unset COMPOSE_INTERACTIVE_NO_CLI
