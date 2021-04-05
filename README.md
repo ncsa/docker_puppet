@@ -9,7 +9,7 @@ Install each of the dependencies below:
 
 ### Preparation (Production use-case only)
 > Installation for production use means puppet agent will run on separate nodes
-> that will communicate with the puppet master over the network (as opposed to
+> that will communicate with the puppet server over the network (as opposed to
 > a testing install where-in all traffic will remain on the localhost.)
 > For more information, see the "Provisioning" section of
 > https://github.com/puppetlabs/pupperware
@@ -23,7 +23,7 @@ Install each of the dependencies below:
   - `export https_proxy=proxy.host.name:1234` #OPTIONAL
 
 ### Installation
-- `curl -O https://raw.githubusercontent.com/ncsa/docker_puppet/master/server/tools/reset.sh`
+- `curl -O https://raw.githubusercontent.com/ncsa/docker_puppet/main/server/tools/reset.sh`
 - `bash reset.sh`
 
 ### Configuration

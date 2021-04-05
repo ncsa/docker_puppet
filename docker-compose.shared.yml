@@ -2,12 +2,11 @@ version: '3.7'
 
 services:
   puppet:
+    environment:
+      - DNS_ALT_NAMES=puppet,${DNS_ALT_NAMES:-}
     volumes:
       - puppetserver-enc:/etc/puppetlabs/enc/
       - puppetserver-r10k:/etc/puppetlabs/r10k/
-  puppetdb:
-    environment:
-      - DNS_ALT_NAMES=puppetdb,${DNS_ALT_NAMES:-}
 volumes:
   puppetserver-enc:
   puppetserver-r10k:

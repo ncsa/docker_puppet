@@ -18,4 +18,4 @@ apt update \
 # the setup script will replace ___placeholders___ with useful values
 export QS_REPO=___ENC_GIT_REPO___
 export QS_GIT_BRANCH=___ENC_GIT_BRANCH___
-curl https://raw.githubusercontent.com/andylytical/quickstart/master/quickstart.sh | bash
+curl https://raw.githubusercontent.com/andylytical/quickstart/main/quickstart.sh | bash

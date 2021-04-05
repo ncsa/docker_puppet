@@ -9,15 +9,55 @@
 set -x
 
 TS=$(date +%s)
-QUICKSTART=https://raw.githubusercontent.com/andylytical/quickstart/master/quickstart.sh
-
-PDIR="${PUPPERWARE:-$HOME/pupperware}"
-echo "Pupperware install dir: '$PDIR'"
-
+QUICKSTART=https://raw.githubusercontent.com/andylytical/quickstart/main/quickstart.sh
 
 # use default repo if QS_REPO is not set
 [[ -z "$QS_REPO" ]] && export QS_REPO=https://github.com/ncsa/docker_puppet
 echo "QS_REPO=$QS_REPO"
+
+
+log() {
+  echo "INFO: $*"
+}
+
+warn() {
+  echo "WARN: $*"
+}
+
+error() {
+  echo "ERROR: $*" 1>&2
+}
+
+croak() {
+  echo "FATAL ERROR: $*" 1>&2
+  echo "Exiting"
+  exit 99
+}
+
+ask_yes_no() {
+  local rv=1
+  local msg="Is this ok?"
+  [[ -n "$1" ]] && msg="$1"
+  echo "$msg"
+  select yn in "Yes" "No"; do
+    case $yn in
+      Yes) rv=0;;
+      No ) rv=1;;
+    esac
+    break
+  done
+  return $rv
+}
+
+
+get_dns_alt_names() {
+  local _parts=()
+  _parts+=( $(hostname) )
+  _parts+=( $(hostname -f) )
+  _parts+=( $( ip -o -4 a s \
+    | awk '$2~/(^lo$|^docker)/{next}{split($4,parts,"/");printf "%s\n",parts[1]}' ) )
+  ( IFS=','; cat <<< "${_parts[*]}" )
+}
 
 
 dokr_compose() {
@@ -44,18 +84,35 @@ rm_existing_pupperware() {
 
 
 assert_git() {
-  type git || {
-    echo "ERROR 'git' not found"
-    exit 1
-  }
+  type git || croak "'git' not found"
 }
 
 
 assert_docker() {
-  systemctl show --property ActiveState docker | grep -q 'ActiveState=active' || {
-    echo "ERROR: Docker is not running."
-    exit 1
-  }
+  systemctl show --property ActiveState docker | grep -q 'ActiveState=active' || \
+    croak "Docker is not running."
+}
+
+
+assert_docker_compose() {
+  type docker-compose || croak "'docker-compose' not found"
+  local _path=$( type docker-compose | tail -1 | awk '{print $NF}' )
+  [[ -x "$_path" ]] || croak "'docker-compose' is not executable"
+}
+
+
+assert_env_var() {
+  local _name="$1"
+  local _default="$2"
+  local _val="${!_name}"
+  if [[ -z "$_val" ]] ; then
+    warn "Missing value for '$_name'."
+    if ask_yes_no "Use default value '${_name}=${_default}'?" ; then
+      eval "export ${_name}=\"${_default}\""
+    else
+      croak "Cannot proceed. Try setting environment variable '$_name'."
+    fi
+  fi
 }
 
 
@@ -66,6 +123,11 @@ _get_env_proxy() {
   [[ -z "$_proxy" ]] && \
   _proxy=$(echo ${https_proxy})
   echo "$_proxy"
+}
+
+
+_set_env_proxy() {
+  eval "export http_proxy=$1"
 }
 
 
@@ -90,7 +152,7 @@ _set_curl_proxy() {
 _get_docker_proxy() {
   local _proxy=""
   # check for docker proxy
-  _proxy=$( docker info | awk -v IGNORECASE=1 '/PROXY/ {print $NF}' )
+  _proxy=$( docker info | awk -v IGNORECASE=1 '/HTTP PROXY/ {print $NF}' )
   echo "$_proxy"
 }
 
@@ -100,14 +162,14 @@ _set_docker_proxy() {
   local _fn _docker_proxy
   if [[ -n "$_proxy" ]] ; then
     _docker_proxy=$( _get_docker_proxy )
-    if [[ "$_docker_proxy" != "$_proxy" ]] ; then
+    if [[ "$_docker_proxy" != "http://$_proxy" ]] ; then
       _fn=/etc/systemd/system/docker.service.d/http-proxy.conf
       mkdir -p $( dirname "$_fn" )
       >"$_fn" cat <<ENDHERE
 [Service]
-Environment="HTTP_PROXY=http://${HTTP_PROXY}"
-Environment="HTTPS_PROXY=http://${HTTP_PROXY}"
-Environment="NO_PROXY=puppet,puppetdb,localhost,127.0.0.1,*.ncsa.illinois.edu"
+Environment="http_proxy=http://${HTTP_PROXY}"
+Environment="https_proxy=http://${HTTP_PROXY}"
+Environment="no_proxy=puppet,puppetdb,localhost,127.0.0.1,*.ncsa.illinois.edu"
 ENDHERE
       systemctl daemon-reload
       systemctl restart docker
@@ -120,36 +182,13 @@ ENDHERE
 
 _set_git_proxy() {
   local _proxy="$1"
-  local _git_proxy
-  if [[ -n "$_proxy" ]] ; then
-    _git_proxy=$( git config --get http.proxy )
-    if [[ "$_git_proxy" != "$_proxy" ]] ; then
-      git config --global http.proxy "$_proxy"
-    fi
-  fi
+  git config --global http.proxy "$_proxy"
 }
 
 
 _set_yum_proxy() {
   local _proxy="$1"
-  if [[ -n "$_proxy" ]] ; then
-    # add to dnf
-    if type dnf &>/dev/null ; then
-      _fn=/etc/dnf/dnf.conf
-      mkdir -p $(dirname "$_fn")
-      touch "$_fn"
-      grep -q -i proxy "$_fn" || \
-        echo "proxy=http://${_proxy}/" >> $_fn
-    fi
-    # add to yum
-    if type yum &>/dev/null ; then
-      _fn=/etc/yum.conf
-      mkdir -p $(dirname "$_fn")
-      touch "$_fn"
-      grep -q -i proxy "$_fn" || \
-        echo "proxy=http://${_proxy}/" >> $_fn
-    fi
-  fi
+  yum-config-manager --setopt="proxy=http://${_proxy}/" --save
 }
 
 
@@ -160,6 +199,7 @@ configure_proxy() {
   [[ -z "$HTTP_PROXY" ]] && HTTP_PROXY=$( _get_curl_proxy )
   # if proxy found, setup host services to use it
   if [[ -n "$HTTP_PROXY" ]] ; then
+    _set_env_proxy "$HTTP_PROXY"
     _set_curl_proxy "$HTTP_PROXY"
     _set_docker_proxy "$HTTP_PROXY"
     _set_git_proxy "$HTTP_PROXY"
@@ -168,8 +208,22 @@ configure_proxy() {
 }
 
 
+dump_var() {
+  echo "${1}=${!1}"
+}
+
+
 assert_git
 assert_docker
+assert_docker_compose
+assert_env_var PUPPERWARE_HOME "$HOME/pupperware"
+assert_env_var DNS_ALT_NAMES "$( get_dns_alt_names )"
+assert_env_var DOMAIN "ncsa.illinois.edu"
+PDIR="$PUPPERWARE_HOME"
+for v in PUPPERWARE_HOME DNS_ALT_NAMES DOMAIN PDIR ; do
+  dump_var "$v"
+done
+croak "FORCED EXIT"
 
 configure_proxy
 
@@ -185,10 +239,7 @@ for i in $(seq 2); do
   sleep 30
   all_services_up && break
 done
-all_services_up || { 
-  echo 'SERVICES NOT STARTED' >&2
-  exit 1
-}
+all_services_up || croak 'SERVICES NOT STARTED'
 
 # Continue setup steps
 export COMPOSE_INTERACTIVE_NO_CLI=1

@@ -3,9 +3,9 @@ Puppet ENC
 ## First Time Setup
 
 ### Customize tables.yaml
-- `docker cp -L pupperware_puppet_1:/etc/puppetlabs/enc/tables.yaml ~/pupperware/server/enc/tables.yaml`
+- `~/pupperware/bin/cp_from_puppet /etc/puppetlabs/enc/tables.yaml ~/pupperware/server/enc/tables.yaml`
 - `vim ~/pupperware/server/enc/tables.yaml`
-- `docker cp -L ~/pupperware/server/enc/tables.yaml pupperware_puppet_1:/etc/puppetlabs/enc/`
+- `~/pupperware/bin/cp_to_puppet ~/pupperware/server/enc/tables.yaml /etc/puppetlabs/enc/`
 
 ### Initialize enc database
 - `~/pupperware/bin/enc_adm --init`
@@ -55,9 +55,9 @@ restored. See config.ini for backup location (default=`/var/backups/puppet-enc`)
 
 ### Add a new column to an existing ENC table
 - `enc_adm -l | awk 'NR==1{num=split($0,hdrs);next;} NR==2{next} {printf "enc_adm --add";for (i=1;i<num;i++)printf " --%s %s",hdrs[i],$i;print ""}' >/root/enc_bkup`
-- `docker cp -L pupperware_puppet_1:/etc/puppetlabs/enc/tables.yaml ~/pupperware/server/enc/tables.yaml`
+- `~/pupperware/bin/copy_from_puppet /etc/puppetlabs/enc/tables.yaml ~/pupperware/server/enc/tables.yaml`
 - `vim ~/pupperware/server/enc/tables.yaml`
-- `docker cp -L ~/pupperware/server/enc/tables.yaml pupperware_puppet_1:/etc/puppetlabs/enc/`
+- `~/pupperware/bin/copy_to_puppet ~/pupperware/server/enc/tables.yaml /etc/puppetlabs/enc/`
 - `bash enc_bkup`
 
 

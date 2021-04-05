@@ -24,7 +24,7 @@ DEBUG="${PUP_INSTALL_DEBUG:-0}"
 FORCE="${PUPINSTALLFORCE:-0}"
 PUP_VERSION="${PUP_INSTALL_VERSION:-5}"
 AGENT_CERTNAME="$PUP_AGENT_CERTNAME"        #allow override hostname
-AGENT_PUPMASTER="${PUP_MASTER:-10.0.2.2}"  #ip or valid DNS hostname of pupmaster
+AGENT_PUPMASTER="${PUP_MASTER:-10.0.2.2}"  #ip or valid DNS hostname of pupserver
 
 
 ###
@@ -38,7 +38,7 @@ while :; do
             echo "    -A <AgentCertname>    (override certname, defaults to hostname)"
             echo "    -d                    (enable debug mode)"
             echo "    -F                    (Force install. Install over the top of existing setup)"
-            echo "    -P <Puppet Master IP> (IP or hostname of puppet master, used only for agent build type)"
+            echo "    -P <Puppet server IP> (IP or hostname of puppet server, used only for agent build type)"
             echo "    -v                    (enable verbose mode)"
             exit
             ;;
@@ -74,7 +74,7 @@ done
 ###
 
 assert_valid_options() {
-    [[ -n "$AGENT_PUPMASTER" ]] || die 'Missing Pup Master IP or hostname'
+    [[ -n "$AGENT_PUPMASTER" ]] || die 'Missing Pup server IP or hostname'
 }
 
 
@@ -136,7 +136,7 @@ agent_config() {
     if [[ -n "$AGENT_CERTNAME" ]] ; then
         $PUPPET config set certname "$AGENT_CERTNAME"
     fi
-    # get full ca from puppet master
+    # get full ca from puppet server
     localcacert="$(puppet agent --configprint localcacert)"
     ca_url="https://$AGENT_PUPMASTER:8140/puppet-ca/v1/certificate/ca"
     curl -k "$ca_url" > "$localcacert"

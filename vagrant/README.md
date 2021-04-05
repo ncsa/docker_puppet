@@ -39,9 +39,9 @@ vagrant ssh agent -c 'sudo /opt/puppetlabs/bin/puppet agent -t'
   ```shell
   vagrant destroy --force --parallel
   ```
-  * Note: Must also clean up the current cert on the puppet master:
+  * Note: Must also clean up the current cert on the puppet server:
    ```shell
-   # from a bash shell in the puppet master container:
+   # from a bash shell in the puppet server container:
    ~/pupperware/bin/puppetserver ca clean --certname HOSTNAME_FROM_ABOVE
    ```
 * Remove all local Vagrant box images

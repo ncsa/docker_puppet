@@ -1,0 +1,18 @@
+#! /bin/sh
+
+cd "$(dirname "$0")/.." || exit 1
+
+src="$1"
+tgt="$2"
+[[ -z "$src" ]] && {
+  echo "ERROR - missing src" 1>&2
+  exit 2
+}
+[[ -z "$tgt" ]] && tgt="."
+
+# Puppet container name
+c_id=$( docker-compose ps -q puppet )
+c_name=$( docker ps --filter "id=$c_id" --format '{{.Names}}' )
+
+cd "$OLDPWD"
+docker cp -L "${c_name}:$src" "$tgt"

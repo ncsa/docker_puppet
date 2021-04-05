@@ -6,11 +6,11 @@ BASE=$( dirname $0 )
 TS=$(date +%s)
 
 # Try to find pupperware install dir
-[[ -z "$PUPPERWARE" ]] && INSTALL_DIR="$PUPPERWARE"
+[[ -z "$PUPPERWARE_HOME" ]] && INSTALL_DIR="$PUPPERWARE_HOME"
 [[ -z "$INSTALL_DIR" ]] && INSTALL_DIR=~/pupperware
 [[ -d "$INSTALL_DIR" ]] || {
   echo "FATAL: Can't find pupperware directory" >&2
-  echo "Try setting PUPPERWARE environment variable" >&2
+  echo "Try setting PUPPERWARE_HOME environment variable" >&2
   exit 1
 }
 

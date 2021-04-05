@@ -23,10 +23,11 @@ if [[ -n "___HTTP_PROXY___" ]] ; then
   PROXY="___HTTP_PROXY___"
 
   # Curl
-  if [[ -f /root/.curlrc ]] && grep -q -F proxy /root/.curlrc ; then
+  curlrc=/root/.curlrc
+  if [[ -f "$curlrc" ]] && grep -q -F proxy "$curlrc" ; then
     : #pass
   else
-    echo "proxy = $PROXY" >> /root/.curlrc
+    echo "proxy = $PROXY" > "$curlrc"
   fi
 
   # Git
@@ -34,7 +35,14 @@ if [[ -n "___HTTP_PROXY___" ]] ; then
 
   # Apt
   if type apt &>/dev/null ; then
-    grep -q -F 'Acquire::http::Proxy' /etc/apt/apt.conf || \
-      echo "Acquire::http::Proxy \"http://$PROXY/\";" >> /etc/apt/apt.conf
+    echo "Acquire::http::Proxy \"http://$PROXY\";" > /etc/apt/apt.conf.d/proxy
+  fi
+
+  # Ruby gems
+  gemrc=/root/.gemrc
+  if [[ -f "$gemrc" ]] && grep -q -F proxy "$gemrc" ; then
+    : #pass
+  else
+    echo "http_proxy: http://$PROXY" >"$gemrc"
   fi
 fi

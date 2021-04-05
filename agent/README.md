@@ -23,7 +23,7 @@ docker-compose up -d agent-centos
 docker-compose exec agent-centos puppet config set certname NEW-FQDN
 ```
 Note: if agent has run before, either delete the existing container and make
-a new one or delete the puppet certs on both agent and master.
+a new one or delete the puppet certs on both agent and server.
 
 ## (one time) Add the node to the puppet ENC database
 ```shell

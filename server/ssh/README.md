@@ -6,7 +6,7 @@ These steps are needed to access a git repo on a server that is behind a firewal
 ### SSH deploy key
 Note:
 - Must have a deploy key setup on the private git server.
-- For production use, suggest a separate key per puppet master.
+- For production use, suggest a separate key per puppet server.
 - These instructions assume an appropriate deploy key has already been created
   and installed on the private git server.
   - For additional help, see:
@@ -18,8 +18,8 @@ Note:
 ### Identify SSH key
 Setup session environment variables for the appropriate ssh deploy key.
 Adjust the path here to point to the private ssh key to use.
-- `export DEPLOYKEY=~/.ssh/r10k.deploy.key`
 Commands below will use this session environment variable.
+- `export DEPLOYKEY=~/.ssh/r10k.deploy.key`
 
 ### Update SSH client config file
 - `vim ~/pupperware/server/ssh/config`

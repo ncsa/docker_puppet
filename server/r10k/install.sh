@@ -19,4 +19,4 @@ apt update \
 export QS_REPO=___R10K_GIT_REPO___
 export QS_GIT_BRANCH=___R10K_GIT_BRANCH___
 export PUP_R10K_DIR=___PUP_R10K_DIR___
-curl https://raw.githubusercontent.com/andylytical/quickstart/master/quickstart.sh | bash
+curl https://raw.githubusercontent.com/andylytical/quickstart/main/quickstart.sh | bash

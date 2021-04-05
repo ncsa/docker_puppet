@@ -3,9 +3,9 @@ Puppet R10k
 ## First Time Setup
 
 ### Customize r10k.yaml
-- `docker cp -L pupperware_puppet_1:/etc/puppetlabs/r10k/r10k.yaml ~/pupperware/server/r10k/r10k.yaml`
+- `~/pupperware/bin/cp_from_puppet /etc/puppetlabs/r10k/r10k.yaml ~/pupperware/server/r10k/r10k.yaml`
 - `vim ~/pupperware/server/r10k/r10k.yaml`
-- `docker cp -L ~/pupperware/server/r10k/r10k.yaml pupperware_puppet_1:/etc/puppetlabs/r10k/`
+- `~/pupperware/bin/cp_to_puppet  ~/pupperware/server/r10k/r10k.yaml /etc/puppetlabs/r10k/`
 
 ### Verify r10k can access all the repos in it's config
 - `~/pupperware/bin/verify_repo_access`

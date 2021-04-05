@@ -4,9 +4,9 @@ set -x
 
 TS=$(date +%s)
 DEFAULT_PDIR=~/pupperware
-PDIR="${PUPPERWARE:-$DEFAULT_PDIR}"
+PDIR="${PUPPERWARE_HOME:-$DEFAULT_PDIR}"
 [[ -d "${PDIR}" ]] || {
-  echo "Can't find pupperware dir at: $DEFAULT_PDIR OR \$PUPPERWARE" 1>&2
+  echo "Can't find pupperware dir at: $DEFAULT_PDIR OR \$PUPPERWARE_HOME" 1>&2
   exit 1
 }
 
@@ -20,15 +20,34 @@ dokr_compose() {
 }
 
 
+get_proxy() {
+  local _proxy=''
+  if [[ -n "$https_proxy" ]] ; then
+    _proxy="$https_proxy"
+  elif [[ -n "$http_proxy" ]] ; then
+    _proxy="$http_proxy"
+  fi
+  echo "$_proxy"
+}
+
+
+get_puppet_container_name() {
+  local _dokr_id=$( dokr_compose ps -q puppet )
+  docker ps --filter "id=$_dokr_id" --format '{{.Names}}'
+}
+
+# Puppet container name
+pup_container=$( get_puppet_container_name )
+
+
 # update bash source files
 # set proxy if needed
-[[ -n "$https_proxy" ]] && {
-  for src in "$PDIR"/server/bashrc/bashrc.d/*.sh "$PDIR"/server/bashrc/install.sh ; do
-    sed -i \
-      -e "s|___HTTP_PROXY___|$https_proxy|" \
-      "$src"
-  done
-}
+PROXY=$( get_proxy )
+for src in "$PDIR"/server/bashrc/bashrc.d/*.sh "$PDIR"/server/bashrc/install.sh ; do
+  sed -i \
+    -e "s|___HTTP_PROXY___|$PROXY|" \
+    "$src"
+done
 
 # Copy files locally
 BASE="$HOME"/pup_bashrc
@@ -43,7 +62,7 @@ chmod +x "$installer"
 
 # copy files into the container
 BASE=/root/pup_bashrc
-docker cp -a "$PDIR"/server/bashrc pupperware_puppet_1:"$BASE"
+docker cp -a "$PDIR"/server/bashrc "${pup_container}:$BASE"
 
 # run the installer inside the container
 installer="$BASE"/install.sh
