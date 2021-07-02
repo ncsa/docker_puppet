@@ -223,7 +223,6 @@ PDIR="$PUPPERWARE_HOME"
 for v in PUPPERWARE_HOME DNS_ALT_NAMES DOMAIN PDIR ; do
   dump_var "$v"
 done
-croak "FORCED EXIT"
 
 configure_proxy
 
