@@ -40,7 +40,7 @@ get_dns_alt_names() {
   _parts+=( $(hostname) )
   _parts+=( $(hostname -f) )
   _parts+=( $( ip -o -4 a s \
-    | awk '$2~/(^lo$|^docker)/{next}{split($4,parts,"/");printf "%s\n",parts[1]}' ) )
+    | awk '$2~/(^lo$|^docker|^br-)/{next}{split($4,parts,"/");printf "%s\n",parts[1]}' ) )
   ( IFS=','; cat <<< "${_parts[*]}" )
 }
 
