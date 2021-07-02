@@ -19,8 +19,12 @@ Install each of the dependencies below:
 
 - Set environment variables
   - `export DNS_ALT_NAMES=short_hostname,fully_qualified_hostname,IP_Address,IP_Address`
-  - `export DOMAIN=ncsa.illinois.edu`
-  - `export https_proxy=proxy.host.name:1234` #OPTIONAL
+    - Can be skipped and a suggestion will be offered.
+    - Set this ahead of time to allow unattended installation.
+    - For a test install (all traffic will remain on the localhost), set this
+      to DNS_ALT_NAMES=internal
+  - `export https_proxy=proxy.host.name:1234`
+    - Only if the host requires a proxy to reach the public internet.
 
 ### Installation
 - `curl -O https://raw.githubusercontent.com/ncsa/docker_puppet/main/server/tools/reset.sh`
@@ -28,8 +32,8 @@ Install each of the dependencies below:
 
 ### Configuration
 
-- [Setup ENC](server/enc/README.md)
-- [Setup R10K](server/r10k/README.md)
+- [Configure ENC](server/enc/README.md)
+- [Configure R10K](server/r10k/README.md)
 
 ---
 

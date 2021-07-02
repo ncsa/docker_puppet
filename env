@@ -3,18 +3,9 @@ ADDITIONAL_COMPOSE_SERVICES_PATH=/root/pupperware/gem/lib/pupperware/compose-ser
 COMPOSE_FILE=${ADDITIONAL_COMPOSE_SERVICES_PATH}/postgres.yml:${ADDITIONAL_COMPOSE_SERVICES_PATH}/puppetdb.yml:${ADDITIONAL_COMPOSE_SERVICES_PATH}/puppet.yml:docker-compose.shared.yml
 
 # PUPPERWARE GENERAL
-# For production: set domain as the output of "hostname -d"
-# For local testing: default is ok
-# NOTE: cmdline and live environment variables will override values set here
-DOMAIN=test.local
 PUPPERWARE_ANALYTICS_ENABLED=false
 
 # PUPPET SERVER SPECIFIC
-# For production: comma separated list of all hostnames and IPs clients will use to reach this puppet server
-# For local testing: default is ok
-# 10.0.2.2 is needed only for puppet agent in a Vagrant VM
-# NOTE: cmdline and live environment variables will override values set here
-# DNS_ALT_NAMES=10.0.2.2
 PUPPET_DNS_ALT_NAMES=puppet,${DNS_ALT_NAMES:-}
 
 # PUPPETDB SPECIFIC

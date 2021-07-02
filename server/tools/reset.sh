@@ -218,9 +218,9 @@ assert_docker
 assert_docker_compose
 assert_env_var PUPPERWARE_HOME "$HOME/pupperware"
 assert_env_var DNS_ALT_NAMES "$( get_dns_alt_names )"
-assert_env_var DOMAIN "ncsa.illinois.edu"
+#assert_env_var DOMAIN "$( hostname -d )"
 PDIR="$PUPPERWARE_HOME"
-for v in PUPPERWARE_HOME DNS_ALT_NAMES DOMAIN PDIR ; do
+for v in PUPPERWARE_HOME DNS_ALT_NAMES PDIR ; do
   dump_var "$v"
 done
 
