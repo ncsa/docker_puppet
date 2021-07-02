@@ -34,21 +34,6 @@ croak() {
   exit 99
 }
 
-ask_yes_no() {
-  local rv=1
-  local msg="Is this ok?"
-  [[ -n "$1" ]] && msg="$1"
-  echo "$msg"
-  select yn in "Yes" "No"; do
-    case $yn in
-      Yes) rv=0;;
-      No ) rv=1;;
-    esac
-    break
-  done
-  return $rv
-}
-
 
 get_dns_alt_names() {
   local _parts=()
@@ -103,15 +88,28 @@ assert_docker_compose() {
 
 assert_env_var() {
   local _name="$1"
-  local _default="$2"
+  shift
+  local _opts=( "$@" )
+  local _opts_len=${#_opts[*]}
   local _val="${!_name}"
+  local _leave_unset="Leave unset"
+  local _quit="Quit"
   if [[ -z "$_val" ]] ; then
     warn "Missing value for '$_name'."
-    if ask_yes_no "Use default value '${_name}=${_default}'?" ; then
-      eval "export ${_name}=\"${_default}\""
-    else
-      croak "Cannot proceed. Try setting environment variable '$_name'."
-    fi
+    echo "Suggested values for '$_name'. Which option?"
+    select choice in "${_opts[@]}" "$_leave_unset" "$_quit"; do
+      if [[ $REPLY -le ${#_opts[*]} ]] ; then
+        eval "export ${_name}=\"${choice}\""
+      elif [[ "$choice" == "$_leave_unset" ]] ; then
+        : #pass
+      elif [[ "$choice" == "$_quit" ]] ; then
+        echo "User exit requested."
+        exit 2
+      else
+        croak "Cannot proceed. Try setting environment variable '$_name'."
+      fi
+      break
+    done
   fi
 }
 
@@ -217,8 +215,7 @@ assert_git
 assert_docker
 assert_docker_compose
 assert_env_var PUPPERWARE_HOME "$HOME/pupperware"
-assert_env_var DNS_ALT_NAMES "$( get_dns_alt_names )"
-#assert_env_var DOMAIN "$( hostname -d )"
+assert_env_var DNS_ALT_NAMES "$( get_dns_alt_names )" "internal"
 PDIR="$PUPPERWARE_HOME"
 for v in PUPPERWARE_HOME DNS_ALT_NAMES PDIR ; do
   dump_var "$v"
